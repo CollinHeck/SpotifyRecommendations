@@ -1,12 +1,57 @@
 {% extends "base.html" %}}
-{% block title %}Home Page {% endblock %}
+{% block title %}Project Info{% endblock %}
 
-{% block header %}This website will give you Spotify recommendations!{% endblock %}
+{% block header %}A website made for creating personalized song recommendations on Spotify.{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.submit() }}
+        <h2>What is this:</h2>
+        <p>
+            This is a website made to give any Spotify user a personal recommendation from the Spotify's United States Top 50 songs playlist.
+        </p>
+        <h2>How to use it:</h2>
+        <p>
+            Simply press the form button.<br>
+            It will redirect you to a spotify page to sign into.<br>
+            Once that is completed you will be shown your personal recommendation.<br>
+        </p>
+
+    <form action="/" method="get">
+
+        <input type="submit" value="Click for recommendation.">
+
     </form>
+    <br>
+        <h2>How does it work:</h2>
+        <p>
+            It is a combinations of data collection from Spotify, data processing, and machine learning to create your personal recommendation.
+        </p>
+        <h3>
+            1) Data Collection:
+        </h3>
+        <p>
+            Pressing the button below will you take you to a authentication page for Spotify.<br>
+            There you will sign into your account. <br>
+            This grants the server temporary access to some of your music preferences.<br>
+            With that permission the server requests your most played songs from the last 4 weeks.<br>
+            Using the list of songs, the server pulls a list of features on each song including things like the "energy" and "acousticness" of the song. <br>
+        </p>
+        <h3>
+            2) Data Processing:
+        </h3>
+        <p>
+            Spotify like most APIs returns jsons. <br>
+            So the next step was to take the jsons and convert them to data frames.<br>
+            Then lastly with the data organized, the data is scaled using a min max scalar. <br>
+        </p>
+        <h3>
+            3) Machine Learning:
+        </h3>
+        <p>
+            The first step is to train a nearest neighbors algorithm on the music from the Top 50 playlist.<br>
+            You can think of this like graphing all those points of a 9 dimensional graph.<br>
+            Then the next step is to go through your most played songs and compare the features of them with songs from the playlist.<br>
+            This is done by finding the Euclidean distance between each point and then picking the two points that are closest to each other.<br>
+            Then this is what is presented on the recommendation page, the recommended song and the favorite of yours that it is similar to.<br>
+        </p>
 {% endblock %}
 

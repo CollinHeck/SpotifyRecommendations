@@ -9,19 +9,28 @@ import pprint
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import NearestNeighbors
 import yaml
+import os
 
 app = Flask(__name__)
 
-with open('./credentials.yml') as f:
+my_dir = os.path.dirname(__file__)
+#cred_path = os.path.join(my_dir, '/credentials.yml')
+
+#print(cred_path)
+
+with open('/home/collinjoseph/mysite/credentials.yml') as f:
     credentials = yaml.load(f, Loader=yaml.FullLoader)
 
 app.config['SECRET_KEY'] = credentials['wtf_forms']['SECRET_KEY']
 
 sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id=credentials['api']['client_id'],
                                        client_secret=credentials['api']['client_secret'],
-                                       redirect_uri="http://127.0.0.1:5000/SpotifyRedirect",
+                                       redirect_uri="http://collinjoseph.pythonanywhere.com/SpotifyRedirect/",
                                        scope="user-library-read, user-top-read")
 
+@app.route('/ProjectInfo')
+def landingPage():
+    return render_template('HomePage.html')
 
 @app.route('/')
 def homePage():
@@ -36,7 +45,7 @@ def homePage():
     return render_template('HomePage.html', form=form)
 
 
-@app.route('/SpotifyRedirect')
+@app.route('/SpotifyRedirect/')
 def spotifyRedirect():
     code = request.args['code']
     token_info = sp_oauth.get_access_token(code)
@@ -187,16 +196,11 @@ def top40recommendations():
     print("Based off:", personalAudioFeaturesDF.iloc[minIndex]['Track'], "by",
           personalAudioFeaturesDF.iloc[minIndex]['Artist'])
 
-    outString = "Recomended Song: {s1} by {a1} Based off: {s2} by {a2}".format(
-        s1=top50AudioFeaturesDF.iloc[index[minIndex]]['Track'].values[0],
-        a1=top50AudioFeaturesDF.iloc[index[minIndex]]['Artist'].values[0],
-        s2=personalAudioFeaturesDF.iloc[minIndex]['Track'],
-        a2=personalAudioFeaturesDF.iloc[minIndex]['Artist'])
-
-    print(outString)
-    print(type(outString))
-
-    return outString
+    s1=top50AudioFeaturesDF.iloc[index[minIndex]]['Track'].values[0]
+    a1=top50AudioFeaturesDF.iloc[index[minIndex]]['Artist'].values[0]
+    s2=personalAudioFeaturesDF.iloc[minIndex]['Track']
+    a2=personalAudioFeaturesDF.iloc[minIndex]['Artist']
+    return render_template('dataPresent.html', s1=s1, a1=a1, s2=s2, a2= a2)
 
 if __name__ == '__main__':
     app.run()
